@@ -1,0 +1,26 @@
+<component name="libraryTable">
+  <library name="lib">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/antlr.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/trove.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/junit-4.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/cglib-full.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/commons-collections.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/hibernate3.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/dom4j.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/jgraph.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/ehcache.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/log4j-1.2.14.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/asm-attrs.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/commons-logging.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/hsqldb.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/java-cup.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/shiftone-jrat.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/JFlex.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/asm.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/BenderNG/lib/jta.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

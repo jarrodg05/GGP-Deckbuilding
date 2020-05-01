@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="../../stylesheets/2player_normal_form/2player_normal_form.xs"?><!DOCTYPE match SYSTEM "http://games.stanford.edu/gamemaster/xml/viewmatch.dtd">
+<match>
+<match-id>match_02</match-id>
+<sight-of>RANDOM</sight-of>
+<role>red</role>
+<role>black</role>
+<player>RANDOM</player>
+<player>LEGAL</player>
+<timestamp>1588306516735</timestamp>
+<startclock>5</startclock>
+<playclock>5</playclock>
+<history/>
+<state>
+<fact>
+<prop-f>CONTROL</prop-f>
+<arg>RED</arg>
+</fact>
+</state>
+</match>

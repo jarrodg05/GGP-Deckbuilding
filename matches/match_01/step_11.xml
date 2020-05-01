@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="../../stylesheets/connectfour/connectfour.xsl"?><!DOCTYPE match SYSTEM "http://games.stanford.edu/gamemaster/xml/viewmatch.dtd">
+<match>
+<match-id>match_01</match-id>
+<sight-of>RANDOM</sight-of>
+<role>red</role>
+<role>black</role>
+<player>RANDOM</player>
+<player>LEGAL</player>
+<timestamp>1588306149443</timestamp>
+<startclock>5</startclock>
+<history>
+<step>
+<step-number>1</step-number>
+<move>(DROP 5)</move>
+<move>NOOP</move>
+</step>
+<step>
+<step-number>2</step-number>
+<move>NOOP</move>
+<move>(DROP 1)</move>
+</step>
+<step>
+<step-number>3</step-number>
+<move>(DROP 1)</move>
+<move>NOOP</move>
+</step>
+<step>
+<step-number>4</step-number>
+<move>NOOP</move>
+<move>(DROP 1)</move>
+</step>
+<step>
+<step-number>5</step-number>
+<move>(DROP 3)</move>
+<move>NOOP</move>
+</step>
+<step>
+<step-number>6</step-number>
+<move>NOOP</move>
+<move>(DROP 1)</move>
+</step>
+<step>
+<step-number>7</step-number>
+<move>(DROP 3)</move>
+<move>NOOP</move>
+</step>
+<step>
+<step-number>8</step-number>
+<move>NOOP</move>
+<move>(DROP 1)</move>
+</step>
+<step>
+<step-number>9</step-number>
+<move>(DROP 7)</move>
+<move>NOOP</move>
+</step>
+<step>
+<step-number>10</step-number>
+<move>NOOP</move>
+<move>(DROP 1)</move>
+</step>
+</history>
+<scores>
+<reward>0</reward>
+<reward>100</reward>
+</scores>
+<state>
+<fact>
+<prop-f>CONTROL</prop-f>
+<arg>RED</arg>
+</fact>
+<fact>
+<prop-f>CELL</prop-f>
+<arg>1</arg>
+<arg>6</arg>
+<arg>BLACK</arg>
+</fact>
+<fact>
+<prop-f>CELL</prop-f>
+<arg>7</arg>
+<arg>1</arg>
+<arg>RED</arg>
+</fact>
+<fact>
+<prop-f>CELL</prop-f>
+<arg>1</arg>
+<arg>5</arg>
+<arg>BLACK</arg>
+</fact>
+<fact>
+<prop-f>CELL</prop-f>
+<arg>3</arg>
+<arg>2</arg>
+<arg>RED</arg>
+</fact>
+<fact>
+<prop-f>CELL</prop-f>
+<arg>1</arg>
+<arg>4</arg>
+<arg>BLACK</arg>
+</fact>
+<fact>
+<prop-f>CELL</prop-f>
+<arg>3</arg>
+<arg>1</arg>
+<arg>RED</arg>
+</fact>
+<fact>
+<prop-f>CELL</prop-f>
+<arg>1</arg>
+<arg>3</arg>
+<arg>BLACK</arg>
+</fact>
+<fact>
+<prop-f>CELL</prop-f>
+<arg>1</arg>
+<arg>2</arg>
+<arg>RED</arg>
+</fact>
+<fact>
+<prop-f>CELL</prop-f>
+<arg>1</arg>
+<arg>1</arg>
+<arg>BLACK</arg>
+</fact>
+<fact>
+<prop-f>CELL</prop-f>
+<arg>5</arg>
+<arg>1</arg>
+<arg>RED</arg>
+</fact>
+</state>
+</match>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<?xml-stylesheet type="text/xsl" href="../../stylesheets/2player_normal_form/2player_normal_form.xsl"?><!DOCTYPE match SYSTEM "http://games.stanford.edu/gamemaster/xml/viewmatch.dtd">
+<match>
+<match-id>match_03</match-id>
+<sight-of>RANDOM</sight-of>
+<role>red</role>
+<role>black</role>
+<player>RANDOM</player>
+<player>MCS</player>
+<timestamp>1588307169869</timestamp>
+<startclock>5</startclock>
+<playclock>5</playclock>
+<history>
+<step>
+<step-number>1</step-number>
+<move>(DROP 4)</move>
+<move>NOOP</move>
+</step>
+</history>
+<state>
+<fact>
+<prop-f>CONTROL</prop-f>
+<arg>BLACK</arg>
+</fact>
+<fact>
+<prop-f>CELL</prop-f>
+<arg>4</arg>
+<arg>1</arg>
+<arg>RED</arg>
+</fact>
+</state>
+</match>
