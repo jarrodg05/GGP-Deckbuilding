@@ -33,6 +33,7 @@ import tud.gamecontroller.term.TermInterface;
 
 import java.util.*;
 
+// Note: This assumes two player only
 public class MCSPlayer<
 	TermType extends TermInterface,
 	StateType extends StateInterface<TermType, ? extends StateType>> extends LocalPlayer<TermType, StateType>  {
@@ -43,7 +44,7 @@ public class MCSPlayer<
 	private long timeexpired;
 	private RoleInterface<TermType> opponentRole;
 
-	private static final long PREFERRED_METAGAME_BUFFER = 3900;
+	private static final long PREFERRED_METAGAME_BUFFER = 2000;
 	private static final long PREFERRED_PLAY_BUFFER = 1000;
 	private int numProbes = 4;
 	
@@ -52,6 +53,9 @@ public class MCSPlayer<
 		random = new Random();
 	}
 
+	/**
+	 * Run when the game is start to perform basic set-up
+	 */
 	@Override
 	public void gameStart(RunnableMatchInterface<TermType, StateType> match, RoleInterface<TermType> role, ConnectionEstablishedNotifier notifier) {
 		super.gameStart(match, role, notifier);
@@ -68,6 +72,11 @@ public class MCSPlayer<
 		}
 	}
 
+	/**
+	 * Returns the agent's next move
+	 *
+	 * @return A legal move
+	 */
 	public MoveInterface<TermType> getNextMove() {
 		ArrayList<MoveInterface<TermType>> legalMoves = new ArrayList<MoveInterface<TermType>>(getLegalMoves());
 
@@ -96,21 +105,25 @@ public class MCSPlayer<
 		int depth = 1;
 		float score;
 		float bestScore = 0;
+		MoveInterface<TermType> tempBestMove = null;
 
 		while(timeexpired < timeLimit) {
+			tempBestMove = null;
 			bestScore = 0;
+			bestMove = tempBestMove; // This way it only updates the best move if the depth has been fully explored
 
 			// For each move, calculate the minimax score at the given depth
 			for (MoveInterface<TermType> move : moves) {
 				score = minscore(move, this.currentState, depth, 0);
 				if (score > bestScore) {
 					bestScore = score;
-					bestMove = move;
+					tempBestMove = move;
 				}
 			}
 			timeexpired = System.currentTimeMillis() - startTime;
 			depth++;
 		}
+		if(bestMove == null) bestMove = tempBestMove;
 
 		return bestMove;
 	}
@@ -134,7 +147,7 @@ public class MCSPlayer<
 	/**
 	 * Returns expected value of a state by running numProbes simulations
 	 *
-	 * @param state      The given state to assess the value of
+	 * @param state      The current state of the game
 	 * @param numProbes  The number of probes to run
 	 * @return           The expected value of a non-terminal state
 	 */
@@ -146,6 +159,12 @@ public class MCSPlayer<
 		return total/numProbes;
 	}
 
+	/**
+	 * Simulates random play from a given state until a terminal node is reached and returns the result
+	 *
+	 * @param state The current state of the game
+	 * @return      The result of random play from the current state
+	 */
 	private float depthcharge(StateInterface<TermType, ?> state) {
 		if(state.isTerminal()) {
 			return (float) state.getGoalValue(role);
@@ -162,12 +181,13 @@ public class MCSPlayer<
 	}
 
 	/**
-	 * Returns the minimum score possible for a given move and a given state
+	 * Returns the minimum score possible for a given move and state if the opponent plays optimally
 	 *
-	 * @param move
-	 * @param currState
-	 * @param searchDepth
-	 * @return
+	 * @param move        The move selected by the player
+	 * @param currState   The current state of the game
+	 * @param searchDepth The maximum depth that will be searched to
+	 * @param depthCount  The current depth searched to
+	 * @return            The worst score that can be received
 	 */
 	private float minscore(MoveInterface<TermType> move, StateInterface<TermType, ?> currState, int searchDepth, int depthCount) {
 		float worstScore = 100;
@@ -194,6 +214,14 @@ public class MCSPlayer<
 		return worstScore;
 	}
 
+	/**
+	 * Returns the score that can be received from playing the best move in the current state
+	 *
+	 * @param currState   The current state of the game
+	 * @param searchDepth The maximum depth that will be searched to
+	 * @param depthCount  The current depth searched to
+	 * @return            The best score that can be received
+	 */
 	private float maxscore(StateInterface<TermType, ?> currState, int searchDepth, int depthCount) {
 		timeexpired = System.currentTimeMillis() - startTime;
 		if(currState.isTerminal()) {
