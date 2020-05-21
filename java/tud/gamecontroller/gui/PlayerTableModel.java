@@ -25,6 +25,7 @@ import tud.gamecontroller.GDLVersion;
 import tud.gamecontroller.game.impl.Game;
 import tud.gamecontroller.players.LegalPlayerInfo;
 import tud.gamecontroller.players.XXXXPlayer.XXXXPlayerInfo;
+import tud.gamecontroller.players.ParserPlayer.ParserPlayerInfo;
 import tud.gamecontroller.players.PlayerInfo;
 import tud.gamecontroller.players.RandomPlayerInfo;
 import tud.gamecontroller.players.RemotePlayerInfo;
@@ -193,6 +194,9 @@ public class PlayerTableModel extends AbstractTableModel {
 			}
 			else if(type.equals(PlayerType.MCS)){
 				return new XXXXPlayerInfo(row,GDLVersion.v1);
+			}
+			else if(type.equals(PlayerType.PARSER)){
+				return new ParserPlayerInfo(row,GDLVersion.v1);
 			}else{
 				return new LegalPlayerInfo(row,GDLVersion.v1);
 			}

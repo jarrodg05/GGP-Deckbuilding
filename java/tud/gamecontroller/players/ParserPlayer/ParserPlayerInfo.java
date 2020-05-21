@@ -17,11 +17,20 @@
     along with GameController.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
- * 
- */
-package tud.gamecontroller.gui;
+package tud.gamecontroller.players.ParserPlayer;
 
-public enum PlayerType {
-	REMOTE, LEGAL, RANDOM, XXXX, MCS, PARSER // ADDED
+import tud.gamecontroller.GDLVersion;
+import tud.gamecontroller.players.LocalPlayerInfo;
+
+public class ParserPlayerInfo extends LocalPlayerInfo {
+
+	public ParserPlayerInfo(int roleindex, GDLVersion gdlVersion) {
+		super(roleindex, "Parser", gdlVersion);
+	}
+
+	@Override
+	public String getType() {
+		return TYPE_PARSER;
+	}
+
 }
