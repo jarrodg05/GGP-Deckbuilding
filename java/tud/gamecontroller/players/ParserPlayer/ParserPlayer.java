@@ -24,8 +24,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import tud.gamecontroller.GDLVersion;
+import tud.gamecontroller.GameController;
 import tud.gamecontroller.game.MoveInterface;
 import tud.gamecontroller.game.StateInterface;
 import tud.gamecontroller.game.impl.Move;
@@ -41,14 +43,13 @@ public class ParserPlayer<
 	TermType extends TermInterface,
 	StateType extends StateInterface<TermType, ? extends StateType>> extends LocalPlayer<TermType, StateType>  {
     
-    // replace String with card class
-    ArrayList<String> cards;
+    CardList cards;
 
-    HashMap<String, Integer> cardPriority;
+    Random rand;
 
 	public ParserPlayer(String name, GDLVersion gdlVersion) {
         super(name, gdlVersion);   
-
+        rand = new Random();
     }
     
     /**
@@ -80,22 +81,29 @@ public class ParserPlayer<
             }
         }
 
-        cards = new ArrayList<String>();
+        cards = new CardList();
         for (int i = 0; i < terms.size(); i++){
             String term = terms.get(i);
             String[] termArgs = term.split(" ", 2);
             if (termArgs[0].equalsIgnoreCase("isCard")){
-                cards.add(termArgs[1]);
+                cards.add(new Card(termArgs[1]));
             }
         }
 
-        cardPriority = new HashMap<String, Integer>(cards.size()); 
-        cardPriority.put("CARD6", 0);
-        cardPriority.put("CARD3", 1);
-        cardPriority.put("CARD2", 2);
-        cardPriority.put("CARD5", 3);
-        cardPriority.put("CARD4", 4);
-        cardPriority.put("CARD1", 5);
+        // TODO refactor so we arent looping through multiple times
+        for (int i = 0; i < terms.size(); i++){
+            String term = terms.get(i);
+            String[] termArgs = term.split(" ");
+            if (termArgs[0].equalsIgnoreCase("cost")){
+                Card card = cards.get(termArgs[1]);
+                card.AddCost("money", Integer.parseInt(termArgs[2]));
+            }
+        }
+
+        // set priority to the cost of the card
+        for (Card card: cards){
+            card.SetPriority(card.GetTotalCost());
+        }
 
     }
 
@@ -105,32 +113,65 @@ public class ParserPlayer<
         Collection<? extends MoveInterface<TermType>> legalMoves = getLegalMoves();
 
         Iterator<?> it = legalMoves.iterator();
-        Move<TermType> bestBuy = null;
-        int bestPriority = Integer.MAX_VALUE;
+        ArrayList<Move<TermType>> bestBuys = new ArrayList<Move<TermType>>();
+        int bestPriority = -1;
         while(it.hasNext()){
             Move<TermType> term = (Move<TermType>) it.next();   
             if (term.getName().equalsIgnoreCase("buy")){
                 List<Term> args = (List<Term>) term.getArgs();    
                 for (Term card : args){
                     if (cards.contains(card.getName())){
-                       int priority = cardPriority.get(card.getName());
-                       if (priority < bestPriority){
+                       int priority = cards.get(card.getName()).priority;
+                       if (priority > bestPriority){
                            bestPriority = priority;
-                           bestBuy = term;
+                           bestBuys.clear();
+                           bestBuys.add(term);
                        }
-                       
-                       
+                       else if (priority == bestPriority){
+                           bestBuys.add(term);
+                       }                       
                     }
                 } 
             }                
         }
 
-        // buy a card if able
-        if (bestBuy != null){
-            return bestBuy;
+
+
+        // otherwise do something else 
+        ArrayList<MoveInterface<TermType>> moves = new ArrayList<MoveInterface<TermType>>();
+        Iterator<? extends MoveInterface<TermType>> it2 = legalMoves.iterator();
+        while(it2.hasNext()){
+            moves.add(it2.next());
         }
 
-        // otherwise do something else (which will be endturn or noop)
-		return legalMoves.iterator().next();
-	}
+        ArrayList<MoveInterface<TermType>> playMoves = new ArrayList<MoveInterface<TermType>>();
+        for (MoveInterface<TermType> move : moves){
+            TermInterface term = move.getTerm();
+            if (term.getName().equalsIgnoreCase("playCard")){
+                playMoves.add(move);
+            }
+        }
+
+        // play cards if able
+        if (!playMoves.isEmpty()){
+            return playMoves.get(rand.nextInt(playMoves.size()));
+        }
+
+        // buy a card if able
+        // picks the highest priority card, or randomly from equal highest cards
+        if (!bestBuys.isEmpty()){
+            return bestBuys.get(rand.nextInt(bestBuys.size()));
+        }
+
+        // pick a random move
+        return moves.get(rand.nextInt(moves.size()));
+    }
+    
+    /*
+    @Override
+    public void gameStop(Object seesTerms, ConnectionEstablishedNotifier notifier) {
+        super.gameStop(seesTerms, notifier);
+        
+    }
+    */
 }
