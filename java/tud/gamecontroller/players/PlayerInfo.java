@@ -30,6 +30,7 @@ public abstract class PlayerInfo {
 	public static final String TYPE_XXXX = "xxxx"; // ADDED
 	public static final String TYPE_MCS = "mcs";
 	public static final String TYPE_PARSER = "parser";
+	public static final String TYPE_IINAIVE_MCS = "iiNaiveMCS";
 
 	private int roleindex;
 	private String name;

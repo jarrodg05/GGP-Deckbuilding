@@ -27,6 +27,8 @@ import tud.gamecontroller.players.XXXXPlayer.XXXXPlayer;
 import tud.gamecontroller.players.XXXXPlayer.XXXXPlayerInfo;
 import tud.gamecontroller.players.ParserPlayer.ParserPlayer;
 import tud.gamecontroller.players.ParserPlayer.ParserPlayerInfo;
+import tud.gamecontroller.players.iiNaiveMCSPlayer.iiNaiveMCSPlayer;
+import tud.gamecontroller.players.iiNaiveMCSPlayer.iiNaiveMCSPlayerInfo;
 import tud.gamecontroller.scrambling.GameScramblerInterface;
 import tud.gamecontroller.term.TermInterface;
 
@@ -67,6 +69,11 @@ public class PlayerFactory {
 	Player<TermType, StateType> createParserPlayer(ParserPlayerInfo info) {
 		return new ParserPlayer<TermType, StateType>(info.getName(), info.getGdlVersion());
 	}
+
+	public static <TermType extends TermInterface, StateType extends StateInterface<TermType, ? extends StateType>>
+	Player<TermType, StateType> createiiNaiveMCSPlayer(iiNaiveMCSPlayerInfo info) {
+		return new iiNaiveMCSPlayer<TermType, StateType>(info.getName(), info.getGdlVersion());
+	}
 	
 	public static <TermType extends TermInterface, StateType extends StateInterface<TermType, ? extends StateType>>
 		Player<TermType, StateType> createPlayer(PlayerInfo info, GameScramblerInterface gameScrambler) {
@@ -87,6 +94,9 @@ public class PlayerFactory {
 		}
 		else if(info instanceof ParserPlayerInfo){ 
 			return PlayerFactory. <TermType, StateType> createParserPlayer((ParserPlayerInfo)info);
+		}
+		else if(info instanceof iiNaiveMCSPlayerInfo){
+			return PlayerFactory. <TermType, StateType> createiiNaiveMCSPlayer((iiNaiveMCSPlayerInfo)info);
 		}
 		return null;
 	}

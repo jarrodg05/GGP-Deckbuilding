@@ -40,6 +40,7 @@ import tud.gamecontroller.players.RandomPlayerInfo;
 import tud.gamecontroller.players.RemotePlayerInfo;
 import tud.gamecontroller.players.XXXXPlayer.XXXXPlayerInfo;
 import tud.gamecontroller.players.ParserPlayer.ParserPlayerInfo;
+import tud.gamecontroller.players.iiNaiveMCSPlayer.iiNaiveMCSPlayerInfo;
 import tud.gamecontroller.term.TermInterface;
 
 
@@ -229,6 +230,19 @@ public abstract class AbstractGameControllerCLIRunner<
 					System.exit(-1);
 				}
 				player=new ParserPlayerInfo(roleindex-1, getGdlVersion());
+			}else{
+				missingArgumentsExit(argv[index-1]);
+			}
+		}else if(argv[index].equals("-iiNaiveMCS")){
+			++index;
+			if(argv.length>=index+1){
+				int roleindex=getIntArg(argv[index], "roleindex"); ++index;
+				if(roleindex<1){
+					System.err.println("roleindex out of bounds");
+					printUsage();
+					System.exit(-1);
+				}
+				player=new iiNaiveMCSPlayerInfo(roleindex-1, getGdlVersion());
 			}else{
 				missingArgumentsExit(argv[index-1]);
 			}
