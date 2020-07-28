@@ -8,3 +8,4 @@ gamecontroller-retracer.jar
 *.class
 .gradle
 build
+bin/
