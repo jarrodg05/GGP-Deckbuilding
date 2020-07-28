@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="src" path="java"/>
+	<classpathentry kind="src" path="lib/BenderNG/source"/>
+	<classpathentry kind="src" path="lib/BenderNG/tests"/>
+	<classpathentry kind="src" path="lib/JavaProver"/>
+	<classpathentry kind="src" path="lib/jocular-0.2/Common/src/java"/>
+	<classpathentry kind="src" path="lib/jocular-0.2/Jocular/src/java"/>
+	<classpathentry kind="lib" path="gamecontroller-cli.jar"/>
+	<classpathentry kind="lib" path="gamecontroller-gui.jar"/>
+	<classpathentry kind="lib" path="gamecontroller-retracer.jar"/>
+	<classpathentry kind="lib" path="gamecontroller.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/antlr.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/asm-attrs.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/asm.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/cglib-full.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/commons-collections.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/commons-logging.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/dom4j.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/ehcache.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/hibernate3.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/hsqldb.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/java-cup.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/JFlex.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/jgraph.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/jta.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/junit-4.1.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/log4j-1.2.14.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/shiftone-jrat.jar"/>
+	<classpathentry kind="lib" path="lib/BenderNG/lib/trove.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

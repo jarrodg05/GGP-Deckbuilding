@@ -6,3 +6,5 @@ gamecontroller-cli.jar
 gamecontroller-gui.jar
 gamecontroller-retracer.jar
 *.class
+.gradle
+build
