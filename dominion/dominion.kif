@@ -71,21 +71,21 @@
 (<= (legal random (drawCards ?p 5))
 	(true (turnStart ?p))
 	(not (true (discardPos ?p ?x ?c))) ; no cards in discard so cant be shuffling 
-	(deckSize ?p ?size)
+	(true (deckSize ?p ?size))
 	(not (strictLess ?size 5))
 )
 
 (<= (legal random (drawCards ?p 5))
 	(true (turnStart ?p))
 	(not (true (shuffling ?p)))
-	(deckSize ?p ?size)
+	(true (deckSize ?p ?size))
 	(not (strictLess ?size 5))
 )
 
 ; shuffle the discard pile and add to top of deck when it is needed
 (<= (legal random (shuffleDiscard ?p ?card ?pos))
 	(true (turnStart ?p))
-	(deckSize ?p ?size)
+	(true (deckSize ?p ?size))
 	(strictLess ?size 5)
 	(true (discardPos ?p ?pos ?card))
 )
@@ -115,8 +115,8 @@
 (<= (base (shuffling ?p) (role ?p) (distinct ?p random)))
  
 (<= (base (numBuys ?buys) (number ?buys)))
-(<= (base (spent ?amount) (number ?amount)))
-(<= (base (extraCoins ?coins)) (number ?coins))
+;(<= (base (spent ?amount) (number ?amount)))
+;(<= (base (extraCoins ?coins)) (number ?coins))
 
 (<= (base (numActions ?amount))	(number ?amount))
 (<= (base (actionCounter ?card ?actionNum)) (isCard ?card) (number ?actionNum))
@@ -176,8 +176,8 @@
 
 (init (numBuys 1))
 
-(init (spent 0))
-(init (extraCoins 0))
+;(init (spent 0))
+;(init (extraCoins 0))
 (init (numActions 1))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -292,21 +292,21 @@
 	(add ?x ?currBuys ?buys)
 )
 
-(<= (next (extraCoins 0))
-	(does ?p endTurn)
-)
+;(<= (next (extraCoins 0))
+;	(does ?p endTurn)
+;)
 
-(<= (next (extraCoins ?coins))
-	(does random (gainCoins ?x))
-	(true (extraCoins ?currCoins))
-	(add ?currCoins ?x ?coins)
-)
+;(<= (next (extraCoins ?coins))
+;	(does random (gainCoins ?x))
+;	(true (extraCoins ?currCoins))
+;	(add ?currCoins ?x ?coins)
+;)
 
-(<= (next (extraCoins ?coins))
-	(true (extraCoins ?coins))
-	(not (does ?p endTurn))
-	(not (does random (gainCoins ?x)))
-)
+;(<= (next (extraCoins ?coins))
+;	(true (extraCoins ?coins))
+;	(not (does ?p endTurn))
+;	(not (does random (gainCoins ?x)))
+;)
 
 
 ;; Discard pile
@@ -314,8 +314,8 @@
 ; add hand to discard at end of turn 
 (<= (next (discardPos ?p ?pos ?card))
 	(does ?p endTurn)
-	(discardSize ?p ?start)
-	(handSize ?p ?size)
+	(true (discardSize ?p ?start))
+	(true (handSize ?p ?size))
 	(add ?start ?size ?end)
 	(strictLess ?pos ?end)
 	(less ?start ?pos)
@@ -326,7 +326,7 @@
 ; add bought card to discard
 (<= (next (discardPos ?p ?pos ?card))
 	(does ?p (buy ?card))
-	(discardSize ?p ?pos)
+	(true (discardSize ?p ?pos))
 )
 
 ; keep discard unless shuffled back
@@ -345,7 +345,7 @@
 ; add played cards to discard
 (<= (next (discardPos ?p ?pos ?card))
 	(does ?p (playCard ?card ?x))
-	(discardSize ?p ?pos)
+	(true (discardSize ?p ?pos))
 )
 
 
@@ -364,7 +364,7 @@
 	(does random (drawCards ?p ?count))
 	(true (deckPos ?p ?x ?card))
 	(strictLess ?x ?count)
-	(handSize ?p ?size)
+	(true (handSize ?p ?size))
 	(add ?size ?x ?pos)
 )
 
@@ -404,14 +404,14 @@
 ; shuffle discard into deck 
 (<= (next (deckPos ?p ?pos ?card))
 	(does random (shuffleDiscard ?p ?card ?x))
-	(deckSize ?p ?pos)
+	(true (deckSize ?p ?pos))
 )
 
 ; keep cards while adding from discard
 (<= (next (deckPos ?p ?pos ?card))
 	(does random (shuffleDiscard ?p ?c ?x))
 	(true (deckPos ?p ?pos ?card))
-	(deckSize ?p ?size)
+	(true (deckSize ?p ?size))
 	(distinct ?pos ?size)
 )
 
@@ -434,22 +434,22 @@
 )
 
 
-(<= (next (spent 0))
-	(does ?p endTurn)
-)
+;(<= (next (spent 0))
+;	(does ?p endTurn)
+;)
 
-(<= (next (spent ?x))
-	(true (spent ?x))
-	(not (does ?p (buy ?card)))
-	(not (does ?p endTurn))
-)
+;(<= (next (spent ?x))
+;	(true (spent ?x))
+;	(not (does ?p (buy ?card)))
+;	(not (does ?p endTurn))
+;)
 
-(<= (next (spent ?total))
-	(does ?p (buy ?card))
-	(true (spent ?previous))
-	(cost ?card ?cost)
-	(add ?cost ?previous ?total)
-)
+;(<= (next (spent ?total))
+;	(does ?p (buy ?card))
+;	(true (spent ?previous))
+;	(cost ?card ?cost)
+;	(add ?cost ?previous ?total)
+;)
 
 (<= (next (numActions 1))
 	(does ?p endTurn)
@@ -541,11 +541,11 @@
 (cost gardens 4)
 (value gardens 0)
 ;(<= (points ?p gardens ?points)
-;	(deckSize ?p ?deck)
-;	(handSize ?p ?hand)
-;	(discardSize ?p ?discard)
+;	(true (deckSize ?p ?deck))
+;	(true (handSize ?p ?hand))
+;	(true (discardSize ?p ?discard))
 ;	(add ?deck ?hand ?discard ?numCards)
-;	(intDivide ?numCards 10 ?points)
+;	(div ?numCards 10 ?points)
 ;)
 (points gardens 3)
 
@@ -617,8 +617,9 @@
 	(ability ?card ?x (gainBuys ?num))
 )
 
-(<= (legal random (gainCoins ?num))
+(<= (legal random (gainCoins ?p ?num))
 	(true (actionCounter ?card ?x))
+	(true (playerTurn ?p))
 	(ability ?card ?x (gainCoins ?num))
 )
 
@@ -638,99 +639,232 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(<= (next (handValue ?p ?value))
+	(true (handValue ?p ?value))
+	(does ?p noop)
+	(not (does random (drawCards ?p ?count)))
+	(not (does random (gainCoins ?p ?coins)))
+)
+
+(<= (next (handValue ?p ?value))
+	(true (handValue ?p ?value))
+	(does ?p (playCard ?card ?x))
+	(not (does random (drawCards ?p ?count)))
+	(not (does random (gainCoins ?p ?coins)))
+)
+
+(<= (next (handValue ?p 0))
+	(does ?p endTurn)
+)
+
+(<= (next (handValue ?p ?value))
+	(does ?p (buy ?card))
+	(true (handValue ?p ?prev))
+	(cost ?card ?cost)
+	(sub ?prev ?cost ?value)
+)
+
+(<= (next (handValue ?p ?total))
+	(does random (drawCards ?p ?count))
+	(true (handValue ?p ?prev))
+	(partialHandValue ?p ?value 0)
+	(add ?prev ?value ?total)
+)
+
+(<= (next (handValue ?p ?value))
+	(does random (gainCoins ?p ?coins))
+	(true (handValue ?p ?prev))
+	(add ?prev ?coins ?value)
+)
+
+(<= (next (handValue ?p ?value))
+	(does ?p (buy ?card))
+	(true (handValue ?p ?prev))
+	(cost ?card ?cost)
+	(sub ?prev ?cost ?value)
+)
+
+(init (discardSize p1 10))
+(init (discardSize p2 10))
+
+(<= (next (discardSize ?p ?size))
+	(does random (shuffleDiscard ?p ?c ?x))
+	(true (discardSize ?p ?prev))
+	(succ ?size ?prev)
+)
+
+(<= (next (discardSize ?p ?size))
+	(does ?p (buy ?c))
+	(true (discardSize ?p ?prev))
+	(succ ?prev ?size)
+)
+
+(<= (next (discardSize ?p ?size))
+	(does ?p endTurn)
+	(true (discardSize ?p ?prev))
+	(true (handSize ?p ?discarded))
+	(add ?prev ?discarded ?size)
+)
+
+(<= (next (discardSize ?p ?size))
+	(does ?p noop)
+	(not (does random (shuffleDiscard ?p ?c ?x)))
+	(true (discardSize ?p ?size))
+)
+
+(<= (next (discardSize ?p ?size))
+	(does ?p (playCard ?card ?x))
+	(true (discardSize ?p ?prev))
+	(succ ?prev ?size)
+)
+
+(init (handSize p1 0))
+(init (handSize p2 0))
+
+(<= (next (handSize ?p ?size))
+	(true (handSize ?p ?size))
+	(not (does random (drawCards ?p ?num)))
+	(not (does ?p endTurn))
+	(not (does ?p (playCard ?card ?x)))
+)
+
+(<= (next (handSize ?p ?size))
+	(does random (drawCards ?p ?num))
+	(true (handSize ?p ?prev))
+	(add ?prev ?num ?size)
+)
+
+(<= (next (handSize ?p 0))
+	(does ?p endTurn)
+)
+
+(<= (next (handSize ?p ?size))
+	(does ?p (playCard ?card ?x))
+	(true (handSize ?p ?prev))
+	(succ ?size ?prev)
+)
+
+(init (deckSize p1 0))
+(init (deckSize p2 0))
+
+(<= (next (deckSize ?p ?size))
+	(does random (drawCards ?p ?num))
+	(true (deckSize ?p ?prev))
+	(sub ?prev ?num ?size)
+)
+
+(<= (next (deckSize ?p ?size))
+	(does random (shuffleDiscard ?p ?c ?x))
+	(true (deckSize ?p ?prev))
+	(succ ?prev ?size)
+)
+
+(<= (next (deckSize ?p ?size))
+	(true (deckSize ?p ?size))
+	(not (does random (shuffleDiscard ?p ?c ?x)))
+	(not (does random (drawCards ?p ?num)))
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; VIEW
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (<= (affordable ?p ?card)
 	(cost ?card ?cost)
-	(handValue ?p ?value)
-	(true (extraCoins ?coins))
-	(add ?value ?coins ?total)
-	(true (spent ?spent))
-	(sub ?total ?spent ?left)
-	(less ?cost ?left)
+	(true (handValue ?p ?value))
+;	(true (extraCoins ?coins))
+;	(add ?value ?coins ?total)
+;	(true (spent ?spent))
+;	(sub ?total ?spent ?left)
+	(less ?cost ?value)
 )
 
 ; calculated using a cumulative sum from last to 0th position 
-(<= (handValue ?p ?value)
-	(handValue ?p ?value 0)
-)
+;(<= (handValue ?p ?value)
+;	(handValue ?p ?value 0)
+;)
 
 ;base case
-(<= (handValue ?p 0 ?pos)
-	(handSize ?p ?pos)
+(<= (partialHandValue ?p 0 ?pos)
+	(does random (drawCards ?p ?pos))
+	;(true (handSize ?p ?pos))
 )
 
 ; add this card to sum of all successive cards
-(<= (handValue ?p ?value ?pos)
-	(true (handPos ?p ?pos ?card))
+(<= (partialHandValue ?p ?value ?pos)
+	;(true (handPos ?p ?pos ?card))
+	(does random (drawCards ?p ?num))
+	(true (deckPos ?p ?pos ?card))
 	(succ ?pos ?x)
-	(handValue ?p ?cumsum ?x)
+	(partialHandValue ?p ?cumsum ?x)
 	(value ?card ?cardValue)
 	(add ?cumsum ?cardValue ?value)
 )
 
 ; if the discard is empty
-(<= (discardSize ?p 0)
-	(not (true (discardPos ?p 0 ?card)))
-)
+;(<= (discardSize ?p 0)
+;	(not (true (discardPos ?p 0 ?card)))
+;)
 
-(<= (discardSize ?p ?size)
-	(discardSize ?p ?size 0)
-)
+;(<= (discardSize ?p ?size)
+;	(discardSize ?p ?size 0)
+;)
 
 ; true only for the first empty position 
-(<= (discardSize ?p 0 ?pos)
-	(true (discardPos ?p ?x ?c2))
-	(succ ?x ?pos)
-	(not (true (discardPos ?p ?pos ?c1)))
-)
+;(<= (discardSize ?p 0 ?pos)
+;	(true (discardPos ?p ?x ?c2))
+;	(succ ?x ?pos)
+;	(not (true (discardPos ?p ?pos ?c1)))
+;)
 
-(<= (discardSize ?p ?size ?pos)
-	(succ ?pos ?x)
-	(discardSize ?p ?cumsum ?x)
-	(succ ?cumsum ?size)
-)
+;(<= (discardSize ?p ?size ?pos)
+;	(succ ?pos ?x)
+;	(discardSize ?p ?cumsum ?x)
+;	(succ ?cumsum ?size)
+;)
 
-(<= (handSize ?p 0)
-	(not (true (handPos ?p 0 ?card)))
-)
+;(<= (handSize ?p 0)
+;	(not (true (handPos ?p 0 ?card)))
+;)
 
-(<= (handSize ?p ?size)
-	(handSize ?p ?size 0)
-)
+;(<= (handSize ?p ?size)
+;	(handSize ?p ?size 0)
+;)
 
-(<= (handSize ?p 0 ?pos)
-	(true (handPos ?p ?x ?c2))
-	(succ ?x ?pos)
-	(not (true (handPos ?p ?pos ?c1)))
-)
+;(<= (handSize ?p 0 ?pos)
+;	(true (handPos ?p ?x ?c2))
+;	(succ ?x ?pos)
+;	(not (true (handPos ?p ?pos ?c1)))
+;)
 
-(<= (handSize ?p ?size ?pos)
-	(succ ?pos ?x)
-	(handSize ?p ?cumsum ?x)
-	(succ ?cumsum ?size)
-)
+;(<= (handSize ?p ?size ?pos)
+;	(succ ?pos ?x)
+;	(handSize ?p ?cumsum ?x)
+;	(succ ?cumsum ?size)
+;)
 
-(<= (deckSize ?p 0)
-	(not (true (deckPos ?p 0 ?card)))
-)
+;(<= (deckSize ?p 0)
+;	(not (true (deckPos ?p 0 ?card)))
+;)
 
-(<= (deckSize ?p ?size)
-	(deckSize ?p ?size 0)
-)
+;(<= (deckSize ?p ?size)
+;	(deckSize ?p ?size 0)
+;)
 
-(<= (deckSize ?p 0 ?pos)
-	(true (deckPos ?p ?x ?c2))
-	(succ ?x ?pos)
-	(not (true (deckPos ?p ?pos ?c1)))
-)
+;(<= (deckSize ?p 0 ?pos)
+;	(true (deckPos ?p ?x ?c2))
+;	(succ ?x ?pos)
+;	(not (true (deckPos ?p ?pos ?c1)))
+;)
 
-(<= (deckSize ?p ?size ?pos)
-	(succ ?pos ?x)
-	(deckSize ?p ?cumsum ?x)
-	(succ ?cumsum ?size)
-)
+;(<= (deckSize ?p ?size ?pos)
+;	(succ ?pos ?x)
+;	(deckSize ?p ?cumsum ?x)
+;	(succ ?cumsum ?size)
+;)
 
 
 ; adds the point values of all player cards
@@ -746,7 +880,7 @@
 )
 
 (<= (deckPoints ?p 0 ?pos)
-	(deckSize ?p ?pos)
+	(true (deckSize ?p ?pos))
 )
 
 (<= (deckPoints ?p ?points ?pos)
@@ -762,7 +896,7 @@
 )
 
 (<= (handPoints ?p 0 ?pos)
-	(handSize ?p ?pos)
+	(true (handSize ?p ?pos))
 )
 	
 (<= (handPoints ?p ?points ?pos)
@@ -778,7 +912,7 @@
 )
 
 (<= (discardPoints ?p 0 ?pos)
-	(discardSize ?p ?pos)
+	(true (discardSize ?p ?pos))
 )
 	
 (<= (discardPoints ?p ?points ?pos)
@@ -849,15 +983,34 @@
 )
 
 ; intDivide x y z := x // y == z
-(<= (intDivide ?x ?y 0)
-	(strictLess ?x ?y)
+;(<= (intDivide ?x ?y 0)
+;	(strictLess ?x ?y)
+;)
+;(<= (intDivide ?x ?y ?result)
+;	(sub ?x ?y ?z)
+;	(intDivide ?z ?y ?cumsum)
+;	(add ?cumsum 1 ?result)
+;)
+
+; div x y z := x // y == z
+(<= (div 0 ?x 0)
+	(number ?x)
 )
-(<= (intDivide ?x ?y ?result)
+(<= (div ?x ?y 0)
+	(gt ?y ?x)
+)
+(<= (div ?x ?y ?result)
+	(gt ?x ?y)
 	(sub ?x ?y ?z)
-	(intDivide ?z ?y ?cumsum)
+	(gte ?z ?y)
+	(div ?z ?y ?cumsum)
 	(add ?cumsum 1 ?result)
 )
-
+(<= (div ?x ?y 1)
+	(gte ?x ?y)
+	(sub ?x ?y ?z)
+	(gt ?y ?z)
+)
 
 
 (<= (number ?x)
