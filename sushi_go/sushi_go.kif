@@ -71,9 +71,9 @@
 ;;; BASE
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(<= (base (hand ?p ?card ?x) (role ?p) (isCard ?card) (number ?x)))
-(<= (base (setup ?p ?x) (role ?p) (number ?x)))
-(<= (base (round ?x) (number ?x)))
+(<= (base (hand ?p ?card ?x)) (role ?p) (isCard ?card) (number ?x))
+(<= (base (setup ?p ?x)) (role ?p) (number ?x))
+(<= (base (round ?x)) (number ?x))
 
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
