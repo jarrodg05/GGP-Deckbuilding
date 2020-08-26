@@ -17,11 +17,20 @@
     along with GameController.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-/**
- * 
- */
-package tud.gamecontroller.gui;
+package tud.gamecontroller.players.GAPlayer;
 
-public enum PlayerType {
-	REMOTE, LEGAL, RANDOM, RANDOM_IMPROVED, XXXX, MCS, PARSER, iiNaive, GA // ADDED
+import tud.gamecontroller.GDLVersion;
+import tud.gamecontroller.players.LocalPlayerInfo;
+
+public class GAPlayerInfo extends LocalPlayerInfo {
+
+	public GAPlayerInfo(int roleindex, GDLVersion gdlVersion) {
+		super(roleindex, "GA", GDLVersion.v1); // If it will only work for GDL-I games
+	}
+
+	@Override
+	public String getType() {
+		return TYPE_GA;
+	}
+
 }

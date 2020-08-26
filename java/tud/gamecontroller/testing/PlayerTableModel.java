@@ -17,7 +17,7 @@
     along with GameController.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package tud.gamecontroller.gui;
+package tud.gamecontroller.testing;
 
 import javax.swing.table.AbstractTableModel;
 
@@ -31,6 +31,7 @@ import tud.gamecontroller.players.RandomPlayerInfo;
 import tud.gamecontroller.players.RandomPlayerImprovedInfo;
 import tud.gamecontroller.players.RemotePlayerInfo;
 import tud.gamecontroller.players.GAPlayer.GAPlayerInfo;
+import tud.gamecontroller.players.MCSPlayer.MCSPlayerInfo;
 import tud.gamecontroller.players.iiNaiveMCSPlayer.iiNaiveMCSPlayerInfo;
 
 
@@ -43,7 +44,7 @@ public class PlayerTableModel extends AbstractTableModel {
 
 	public PlayerTableModel(Game<?,?> game) {
 		super();
-		this.game=game;
+		this.game = game;
 		this.rows=new PlayerRecord[getRowCount()];
 		for(int i=0;i<rows.length;i++){
 			rows[i]=new PlayerRecord(i);
@@ -190,7 +191,8 @@ public class PlayerTableModel extends AbstractTableModel {
 		public PlayerInfo getPlayerInfo(){
 			if(type.equals(PlayerType.REMOTE)){
 				return new RemotePlayerInfo(row,host+":"+port,host,port,GDLVersion.v1); 
-			}else if(type.equals(PlayerType.RANDOM)){
+			}
+			else if(type.equals(PlayerType.RANDOM)){
 				return new RandomPlayerInfo(row,GDLVersion.v1);
 			}
 			else if(type.equals(PlayerType.RANDOM_IMPROVED)){
@@ -200,18 +202,17 @@ public class PlayerTableModel extends AbstractTableModel {
 				return new XXXXPlayerInfo(row,GDLVersion.v1);
 			}
 			else if(type.equals(PlayerType.MCS)){
-				return new XXXXPlayerInfo(row,GDLVersion.v1);
-			}
-			else if(type.equals(PlayerType.PARSER)){
-				return new ParserPlayerInfo(row,GDLVersion.v1);
-			}
-			else if(type.equals(PlayerType.GA)){
-				return new GAPlayerInfo(row,GDLVersion.v1);
+				return new MCSPlayerInfo(row,GDLVersion.v1);
 			}
 			else if(type.equals(PlayerType.iiNaive)){
 				return new iiNaiveMCSPlayerInfo(row,GDLVersion.v1);
 			}
-			else{
+			else if(type.equals(PlayerType.GA)){
+				return new GAPlayerInfo(row,GDLVersion.v1);
+			}
+			else if(type.equals(PlayerType.PARSER)){
+				return new ParserPlayerInfo(row,GDLVersion.v1);
+			}else{
 				return new LegalPlayerInfo(row,GDLVersion.v1);
 			}
 		}

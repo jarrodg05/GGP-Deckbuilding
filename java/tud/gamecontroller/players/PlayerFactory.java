@@ -21,6 +21,8 @@
 package tud.gamecontroller.players;
 
 import tud.gamecontroller.game.StateInterface;
+import tud.gamecontroller.players.GAPlayer.GAPlayer;
+import tud.gamecontroller.players.GAPlayer.GAPlayerInfo;
 import tud.gamecontroller.players.MCSPlayer.MCSPlayer;
 import tud.gamecontroller.players.MCSPlayer.MCSPlayerInfo;
 import tud.gamecontroller.players.XXXXPlayer.XXXXPlayer;
@@ -42,6 +44,11 @@ public class PlayerFactory {
 	public static <TermType extends TermInterface, StateType extends StateInterface<TermType, ? extends StateType>>
 		Player<TermType, StateType> createRandomPlayer(RandomPlayerInfo info) {
 		return new RandomPlayer<TermType, StateType>(info.getName(), info.getGdlVersion());
+	}
+
+	public static <TermType extends TermInterface, StateType extends StateInterface<TermType, ? extends StateType>>
+		Player<TermType, StateType> createRandomPlayerImproved(RandomPlayerImprovedInfo info) {
+		return new RandomPlayerImproved<TermType, StateType>(info.getName(), info.getGdlVersion());
 	}
 	
 	public static <TermType extends TermInterface, StateType extends StateInterface<TermType, ? extends StateType>>
@@ -74,16 +81,27 @@ public class PlayerFactory {
 	Player<TermType, StateType> createiiNaiveMCSPlayer(iiNaiveMCSPlayerInfo info) {
 		return new iiNaiveMCSPlayer<TermType, StateType>(info.getName(), info.getGdlVersion());
 	}
+
+	public static <TermType extends TermInterface, StateType extends StateInterface<TermType, ? extends StateType>>
+	Player<TermType, StateType> createGAPlayer(GAPlayerInfo info) {
+		return new GAPlayer<TermType, StateType>(info.getName(), info.getGdlVersion());
+	}
 	
 	public static <TermType extends TermInterface, StateType extends StateInterface<TermType, ? extends StateType>>
 		Player<TermType, StateType> createPlayer(PlayerInfo info, GameScramblerInterface gameScrambler) {
 		if(info instanceof RemotePlayerInfo){
 			return PlayerFactory. <TermType, StateType> createRemotePlayer((RemotePlayerInfo)info, gameScrambler);
-		}else if(info instanceof RandomPlayerInfo){
+		}
+		else if(info instanceof RandomPlayerInfo){
 			return PlayerFactory. <TermType, StateType> createRandomPlayer((RandomPlayerInfo)info);
-		}else if(info instanceof LegalPlayerInfo){
+		}
+		else if(info instanceof RandomPlayerImprovedInfo){
+			return PlayerFactory. <TermType, StateType> createRandomPlayerImproved((RandomPlayerImprovedInfo)info);
+		}
+		else if(info instanceof LegalPlayerInfo){
 			return PlayerFactory. <TermType, StateType> createLegalPlayer((LegalPlayerInfo)info);
-		}else if(info instanceof HumanPlayerInfo){
+		}
+		else if(info instanceof HumanPlayerInfo){
 			return PlayerFactory. <TermType, StateType> createHumanPlayer((HumanPlayerInfo)info);
 		}
 		else if(info instanceof XXXXPlayerInfo){ // ADDED
@@ -97,6 +115,9 @@ public class PlayerFactory {
 		}
 		else if(info instanceof iiNaiveMCSPlayerInfo){
 			return PlayerFactory. <TermType, StateType> createiiNaiveMCSPlayer((iiNaiveMCSPlayerInfo)info);
+		}
+		else if(info instanceof GAPlayerInfo){
+			return PlayerFactory. <TermType, StateType> createGAPlayer((GAPlayerInfo)info);
 		}
 		return null;
 	}

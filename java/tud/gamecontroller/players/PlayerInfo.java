@@ -27,10 +27,13 @@ public abstract class PlayerInfo {
 	public static final String TYPE_COMPUTER = "computer";
 	public static final String TYPE_LEGAL = "legal";
 	public static final String TYPE_RANDOM = "random";
+	public static final String TYPE_RANDOM_IMPROVED = "random_improved";
 	public static final String TYPE_XXXX = "xxxx"; // ADDED
 	public static final String TYPE_MCS = "mcs";
 	public static final String TYPE_PARSER = "parser";
 	public static final String TYPE_IINAIVE_MCS = "iiNaiveMCS";
+	public static final String TYPE_GA = "ga";
+
 
 	private int roleindex;
 	private String name;

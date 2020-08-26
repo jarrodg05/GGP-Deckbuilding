@@ -17,7 +17,7 @@
     along with GameController.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-package tud.gamecontroller.gui;
+package tud.gamecontroller.testing;
 
 import java.awt.Component;
 
@@ -54,7 +54,7 @@ public class JPlayerTable extends JTable {
 		private static final long serialVersionUID = 7990970130621681632L;
 
 		public PlayerTypeCellEditor() {
-			super(new JComboBox(new PlayerType[]{PlayerType.REMOTE, PlayerType.RANDOM, PlayerType.RANDOM_IMPROVED, PlayerType.LEGAL, PlayerType.XXXX, PlayerType.MCS, PlayerType.PARSER, PlayerType.iiNaive, PlayerType.GA})); // ADDED
+			super(new JComboBox(new PlayerType[]{PlayerType.REMOTE, PlayerType.RANDOM, PlayerType.RANDOM_IMPROVED, PlayerType.LEGAL, PlayerType.XXXX, PlayerType.MCS, PlayerType.iiNaive, PlayerType.PARSER, PlayerType.GA})); // ADDED
 		}
 	}
 	

@@ -20,8 +20,8 @@
 /**
  * 
  */
-package tud.gamecontroller.gui;
+package tud.gamecontroller.testing;
 
 public enum PlayerType {
-	REMOTE, LEGAL, RANDOM, RANDOM_IMPROVED, XXXX, MCS, PARSER, iiNaive, GA // ADDED
+	REMOTE, LEGAL, RANDOM, RANDOM_IMPROVED, XXXX, MCS, PARSER, GA, iiNaive // ADDED
 }

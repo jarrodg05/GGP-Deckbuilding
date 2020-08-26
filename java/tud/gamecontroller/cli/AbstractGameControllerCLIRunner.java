@@ -38,6 +38,7 @@ import tud.gamecontroller.players.MCSPlayer.MCSPlayerInfo;
 import tud.gamecontroller.players.PlayerInfo;
 import tud.gamecontroller.players.RandomPlayerInfo;
 import tud.gamecontroller.players.RemotePlayerInfo;
+import tud.gamecontroller.players.GAPlayer.GAPlayerInfo;
 import tud.gamecontroller.players.XXXXPlayer.XXXXPlayerInfo;
 import tud.gamecontroller.players.ParserPlayer.ParserPlayerInfo;
 import tud.gamecontroller.players.iiNaiveMCSPlayer.iiNaiveMCSPlayerInfo;
@@ -243,6 +244,19 @@ public abstract class AbstractGameControllerCLIRunner<
 					System.exit(-1);
 				}
 				player=new iiNaiveMCSPlayerInfo(roleindex-1, getGdlVersion());
+			}else{
+				missingArgumentsExit(argv[index-1]);
+			}
+		}else if(argv[index].equals("-ga")){
+			++index;
+			if(argv.length>=index+1){
+				int roleindex=getIntArg(argv[index], "roleindex"); ++index;
+				if(roleindex<1){
+					System.err.println("roleindex out of bounds");
+					printUsage();
+					System.exit(-1);
+				}
+				player=new GAPlayerInfo(roleindex-1, getGdlVersion());
 			}else{
 				missingArgumentsExit(argv[index-1]);
 			}

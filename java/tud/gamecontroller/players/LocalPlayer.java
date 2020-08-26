@@ -49,7 +49,11 @@ public abstract class LocalPlayer<TermType extends TermInterface, StateType exte
 	public void gameStart(RunnableMatchInterface<TermType, StateType> match, RoleInterface<TermType> role, ConnectionEstablishedNotifier notifier) {
 		super.gameStart(match, role, notifier);
 		notifyStartRunning();
-		notifier.connectionEstablished();
+
+		if (notifier != null) {
+			notifier.connectionEstablished();
+		}
+
 		currentStep = 1;
 		if( getGdlVersion()!=match.getGame().getGdlVersion() ) {
 			logger.warning("GDL versions of player and game do not match!");
@@ -71,7 +75,9 @@ public abstract class LocalPlayer<TermType extends TermInterface, StateType exte
 	@SuppressWarnings("unchecked")
 	public MoveInterface<TermType> gamePlay(Object seesTerms, ConnectionEstablishedNotifier notifier) {
 		notifyStartRunning();
-		notifier.connectionEstablished();
+		if (notifier != null) {
+			notifier.connectionEstablished();
+		}
 		if(seesTerms != null) {
 			currentStep++;
 			// calculate the successor(s) of current state(s)
