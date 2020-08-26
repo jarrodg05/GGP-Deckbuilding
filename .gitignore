@@ -9,3 +9,5 @@ gamecontroller-retracer.jar
 .gradle
 build
 bin/
+*.txt
+*.json
