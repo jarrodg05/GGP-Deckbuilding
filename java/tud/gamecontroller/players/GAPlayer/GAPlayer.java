@@ -48,10 +48,9 @@ public class GAPlayer<
     Random rand;
 
     boolean training = false;
+    boolean roulette = false;
     GenomeCollection genomes;
-   // RouletteGenomeCollection rouletteGenomes;
-
-    ArrayList<String> order;
+    RouletteGenomeCollection rouletteGenomes;
 
     private int agentID;
 
@@ -60,8 +59,9 @@ public class GAPlayer<
         rand = new Random();
     }
 
-    public void training(Game<Term, GameState> game){
+    public void training(Game<Term, GameState> game, boolean roulette){
         training = true;
+        this.roulette = roulette;
 
         String kif = game.getKIFGameDescription();
         ArrayList<String> terms = new ArrayList<String>();
@@ -95,9 +95,12 @@ public class GAPlayer<
             }
         }
 
-        genomes = new GenomeCollection(cards);
-       // rouletteGenomes = new RouletteGenomeCollection(cards);
-       agentID = RouletteGenomeCollection.instance.init(cards);
+        if (roulette) {
+            agentID = RouletteGenomeCollection.instance.init(cards);
+        }
+        else {
+            genomes = new GenomeCollection(cards);
+        }
     }
     
     /**
@@ -106,10 +109,10 @@ public class GAPlayer<
 	@Override
 	public void gameStart(RunnableMatchInterface<TermType, StateType> match, RoleInterface<TermType> role, ConnectionEstablishedNotifier notifier) {
         super.gameStart(match, role, notifier);
-        order = genomes.getOrder();
     }
 
     private int getPriority(String card) {
+        ArrayList<String> order = genomes.getOrder();
         int priority = order.indexOf(card);
         if (priority != -1){
             return priority;
@@ -121,51 +124,51 @@ public class GAPlayer<
 	public MoveInterface<TermType> getNextMove() {
         
         Collection<? extends MoveInterface<TermType>> legalMoves = getLegalMoves();
-        order = genomes.getOrder();
-
-        
         Iterator<?> it = legalMoves.iterator();
+
+        // for non roulette ga
         ArrayList<Move<TermType>> bestBuys = new ArrayList<Move<TermType>>();
-        int bestPriority = 100;
-        while(it.hasNext()){
-            Move<TermType> term = (Move<TermType>) it.next();   
-            if (term.getName().equalsIgnoreCase("buy")){
-                List<Term> args = (List<Term>) term.getArgs();    
-                for (Term card : args){
-                    if (cards.contains(card.getName())){
-                       int priority = getPriority(card.getName());
-                       if (priority < bestPriority){
-                           bestPriority = priority;
-                           bestBuys.clear();
-                           bestBuys.add(term);
-                       }
-                       else if (priority == bestPriority){
-                           bestBuys.add(term);
-                       }
-                    }
-                }
-            }                
-        }
-        
 
-
-        /*
-        Iterator<?> it = legalMoves.iterator();
+        // for roulette ga
         HashMap<String, Move<TermType>> availableMoves = new HashMap<String, Move<TermType>>();
         ArrayList<String> availableCards = new ArrayList<String>();
-        while(it.hasNext()){
-            Move<TermType> term = (Move<TermType>) it.next();   
-            if (term.getName().equalsIgnoreCase("buy")){
-                List<Term> args = (List<Term>) term.getArgs();    
-                for (Term card : args){
-                    if (cards.contains(card.getName())){
-                        availableCards.add(card.getName());
-                        availableMoves.put(card.getName(), term);
+
+        if (roulette) {
+            while(it.hasNext()){
+                Move<TermType> term = (Move<TermType>) it.next();   
+                if (term.getName().equalsIgnoreCase("buy")){
+                    List<Term> args = (List<Term>) term.getArgs();    
+                    for (Term card : args){
+                        if (cards.contains(card.getName())){
+                            availableCards.add(card.getName());
+                            availableMoves.put(card.getName(), term);
+                        }
                     }
-                }
-            }                
+                }                
+            }
         }
-*/
+        else {
+            int bestPriority = 100;
+            while(it.hasNext()){
+                Move<TermType> term = (Move<TermType>) it.next();   
+                if (term.getName().equalsIgnoreCase("buy")){
+                    List<Term> args = (List<Term>) term.getArgs();    
+                    for (Term card : args){
+                        if (cards.contains(card.getName())){
+                        int priority = getPriority(card.getName());
+                        if (priority < bestPriority){
+                            bestPriority = priority;
+                            bestBuys.clear();
+                            bestBuys.add(term);
+                        }
+                        else if (priority == bestPriority){
+                            bestBuys.add(term);
+                        }
+                        }
+                    }
+                }                
+            }
+        }
 
 
         // get the legal moves
@@ -175,6 +178,7 @@ public class GAPlayer<
             moves.add(it2.next());
         }
 
+        // find the play moves
         ArrayList<MoveInterface<TermType>> playMoves = new ArrayList<MoveInterface<TermType>>();
         for (MoveInterface<TermType> move : moves){
             TermInterface term = move.getTerm();
@@ -193,27 +197,22 @@ public class GAPlayer<
         
         if (!bestBuys.isEmpty()){
             return bestBuys.get(rand.nextInt(bestBuys.size()));
-        }
-        
-/*
-        if (availableCards.size() > 0) {
+        } 
+        else if (availableCards.size() > 0) {
             String card = RouletteGenomeCollection.instance.getCard(availableCards.toArray(new String[0]), agentID);
             return availableMoves.get(card);
         }
-*/
-        // pick a random move
+
+        // otherwise pick a random move
         return moves.get(rand.nextInt(moves.size()));
     }
     
     public void gameScore(HashMap<RoleInterface<Term>, Integer> scores){
-        genomes.GameOver(scores, (RoleInterface<Term>) role);
-     //   RouletteGenomeCollection.instance.GameOver(scores, (RoleInterface<Term>) role, agentID);
+        if (roulette){
+            RouletteGenomeCollection.instance.GameOver(scores, (RoleInterface<Term>) role, agentID);
+        }
+        else {
+            genomes.GameOver(scores, (RoleInterface<Term>) role);
+        }
     }
-
-    /*
-    public void printResults() {
-        //genomes.printResults();
-        RouletteGenomeCollection.instance.printResults();
-    }
-    */
 }

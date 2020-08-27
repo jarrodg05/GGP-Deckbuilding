@@ -20,7 +20,6 @@ public class RouletteGenomeCollection {
 	private float lowestLeader;
 
 	private ArrayList<Integer> currentGenomeIndices;
-	//private int currentGenomeIndex;
 	private int gameCounter;
 	private int generation;
 	private int totalGames;
@@ -29,7 +28,7 @@ public class RouletteGenomeCollection {
 	private final int gameLimit = 5;
 	private final int numLeaders = 5;
 
-	private String dataFile = "roulette_bigMoney.txt";
+	private String dataFile = "roulette_sushi.txt";
 
 	private Random rand;
 
@@ -100,22 +99,6 @@ public class RouletteGenomeCollection {
 		if (totalGames % 10 == 0) {
 			System.out.println(totalGames);
 		}
-
-		/*
-		if (++gameCounter == gameLimit) {
-			gameCounter = 0;
-			System.out.println(totalGames);
-
-			
-			if (++currentGenomeIndex == generalPool.length) {
-				updateLeaders();
-				regenerateGenomes();
-				currentGenomeIndex = 0;
-				printResults();
-				generation++;
-			}
-		}
-		*/
 	}
 
 	public void printResults() {
@@ -156,7 +139,6 @@ public class RouletteGenomeCollection {
 			generalPool[i] = new RouletteGenome(cards);
 		}
 		currentGenomeIndices = new ArrayList<Integer>();
-		//currentGenomeIndex = 0;
 		lowestLeader = Integer.MIN_VALUE;
 	}
 

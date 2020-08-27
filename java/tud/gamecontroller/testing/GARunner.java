@@ -14,7 +14,6 @@ import tud.gamecontroller.game.JointMoveInterface;
 import tud.gamecontroller.game.MoveInterface;
 import tud.gamecontroller.game.RoleInterface;
 import tud.gamecontroller.game.RunnableMatchInterface;
-import tud.gamecontroller.game.impl.Fluent;
 import tud.gamecontroller.game.impl.Game;
 import tud.gamecontroller.game.impl.JointMove;
 import tud.gamecontroller.game.impl.RunnableMatch;
@@ -102,7 +101,7 @@ public class GARunner {
 					// timeout after 2 mins
 					if (elaspsed > 1000*60*2) {
 						System.out.println(jointMove.getKIFForm());
-						for (FluentInterface f : currentState.getFluents()) {
+						for (FluentInterface<Term> f : currentState.getFluents()) {
 							System.out.print(f.getKIFForm());
 						}
 						System.out.println();
@@ -125,23 +124,7 @@ public class GARunner {
 			} catch (IllegalArgumentException e) {
 				e.printStackTrace();
 			}
-			/*
-			for (Integer value : goalValues.values()) {
-				System.out.println(value);
-			}
-			*/
 		}
-
-		for (Player<Term, State<Term, GameState>> player : players.values()) {
-			if (player instanceof GAPlayer){
-				GAPlayer<Term, State<Term, GameState>> ml = (GAPlayer<Term, State<Term, GameState>>) player;
-				//ml.printResults();
-			}
-		}
-
-
-		//gameController=new GameController<Term, GameState>(match, getLogger());
-		//gameController.runGame();
 	}
 
 	private Map<RoleInterface<Term>,Player<Term, State<Term, GameState>>> createPlayers(Game<Term, GameState> game) {
@@ -152,8 +135,8 @@ public class GARunner {
 
 			Player<Term, State<Term, GameState>> player = players.get(role);
 			if (player instanceof GAPlayer){
-				GAPlayer<Term, State<Term, GameState>> ml = (GAPlayer<Term, State<Term, GameState>>) player;
-				ml.training(game);
+				GAPlayer<Term, State<Term, GameState>> ga = (GAPlayer<Term, State<Term, GameState>>) player;
+				ga.training(game, false);
 			}
 		}
 

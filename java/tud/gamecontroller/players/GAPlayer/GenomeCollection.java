@@ -27,9 +27,7 @@ public class GenomeCollection {
 	private final int gameLimit = 4;
 	private final int numLeaders = 5;
 
-	private String dataFile = "dominion_results.txt";
-
-	private ArrayList<Integer> fitnesses;
+	private String dataFile = "sushi.txt";
 
 	private Random rand;
 
@@ -62,7 +60,6 @@ public class GenomeCollection {
 				updateLeaders();
 				regenerateGenomes();
 				currentGenomeIndex = 0;
-				//fitnesses.add(lowestLeader);
 				printResults();
 				generation++;
 			}
@@ -94,21 +91,12 @@ public class GenomeCollection {
 		gameCounter = 0;
 		totalGames = 0;
 		generation = 0;
-		fitnesses = new ArrayList<>();
 		rand = new Random();
 
 		for (int i = 0; i < generalPool.length; i++){
 			generalPool[i] = new Genome(cards);
 		}
 		currentGenomeIndex = 0;
-
-		/*
-		for (int i = 0; i < numLeaders; i++) {
-			Genome genome = new Genome(cards);
-			genome.updateFitness(Integer.MIN_VALUE);
-			leadingPool.add(genome);
-		}
-		*/
 		lowestLeader = Integer.MIN_VALUE;
 	}
 
