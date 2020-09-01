@@ -22,6 +22,7 @@ import tud.gamecontroller.game.javaprover.Term;
 import tud.gamecontroller.players.Player;
 import tud.gamecontroller.players.PlayerFactory;
 import tud.gamecontroller.players.PlayerInfo;
+import tud.gamecontroller.players.RandomPlayerInfo;
 import tud.gamecontroller.players.GAPlayer.GAPlayer;
 import tud.gamecontroller.players.GAPlayer.RouletteGenomeCollection;
 import cs227b.teamIago.util.GameState;
@@ -34,13 +35,16 @@ public class GARunner {
 	File gameFile; // get from gui file picker
 	final ReasonerFactoryInterface<Term, GameState> reasonerFactoryInterface; 
 	GDLVersion gdlVersion = GDLVersion.v1; // can use gui to change
-	int trainingIters = 2000;
+	int trainingIters = 10000;
 
 	String matchID;
 	int startClock;
 	int playClock;
 	Collection<PlayerInfo> playerInfos;
 	State<Term, GameState> currentState;
+
+	private Map<RoleInterface<Term>,Player<Term, State<Term, GameState>>> players;
+	private RunnableMatchInterface<Term, State<Term, GameState>> match;
 
 	public GARunner() {
 		reasonerFactoryInterface = new ReasonerFactory();
@@ -64,67 +68,111 @@ public class GARunner {
 	public void start() throws InterruptedException{
 		
 		// instantiates this class so the players can use it
-		new RouletteGenomeCollection();
+		new RouletteGenomeCollection(this);
 
-		Map<RoleInterface<Term>,Player<Term, State<Term, GameState>>> players= createPlayers(game);
-		RunnableMatchInterface<Term, State<Term, GameState>> match = new RunnableMatch<Term, GameState>(matchID, game, startClock, playClock, players);
+		players = createPlayers(game);
+		match = new RunnableMatch<Term, GameState>(matchID, game, startClock, playClock, players);
 
 		for (int i = 0; i < trainingIters; i++){
+			runGame(players);			
+		}
+	}
 
-			try {
+	private void runGame(Map<RoleInterface<Term>,Player<Term, State<Term, GameState>>> players) {
+		try {
+			for (RoleInterface<Term> role : players.keySet()) {
+				Player<Term, State<Term, GameState>> player = players.get(role);
+				player.gameStart(match, role, null);
+			}
+
+			currentState = game.getInitialState();
+			State<Term, GameState> priorState = currentState;
+			JointMoveInterface<Term> priorJointMove = null;
+
+			long startTime = System.currentTimeMillis();
+			long elaspsed = 0l;
+
+			while (!currentState.isTerminal()) {
+				JointMoveInterface<Term> jointMove = new JointMove<Term>(game.getOrderedRoles());
 				for (RoleInterface<Term> role : players.keySet()) {
 					Player<Term, State<Term, GameState>> player = players.get(role);
-					player.gameStart(match, role, null);
+					Object seesTerm = getSeesTermsForRole(role, player, priorState, priorJointMove);
+					MoveInterface<Term> move = player.gamePlay(seesTerm, null);
+					jointMove.put(role, move);
 				}
 
-				currentState = game.getInitialState();
-				State<Term, GameState> priorState = currentState;
-				JointMoveInterface<Term> priorJointMove = null;
+				priorState = currentState;
+				currentState = currentState.getSuccessor(jointMove);
+				priorJointMove = jointMove;
 
-				long startTime = System.currentTimeMillis();
-				long elaspsed = 0l;
-
-				while (!currentState.isTerminal()) {
-					JointMoveInterface<Term> jointMove = new JointMove<Term>(game.getOrderedRoles());
-					for (RoleInterface<Term> role : players.keySet()) {
-						Player<Term, State<Term, GameState>> player = players.get(role);
-						Object seesTerm = getSeesTermsForRole(role, player, priorState, priorJointMove);
-						MoveInterface<Term> move = player.gamePlay(seesTerm, null);
-						jointMove.put(role, move);
+				elaspsed = System.currentTimeMillis() - startTime;
+				// timeout after 2 mins
+				if (elaspsed > 1000*60*2) {
+					System.out.println(jointMove.getKIFForm());
+					for (FluentInterface<Term> f : currentState.getFluents()) {
+						System.out.print(f.getKIFForm());
 					}
+					System.out.println();
+					break;
+				}
+			}
 
-					priorState = currentState;
-					currentState = currentState.getSuccessor(jointMove);
-					priorJointMove = jointMove;
+			HashMap<RoleInterface<Term>, Integer> goalValues = new HashMap<RoleInterface<Term>, Integer>();
+			for (RoleInterface<Term> role : game.getOrderedRoles()) {
+				int goal = currentState.getGoalValue(role);
+				goalValues.put(role, goal);
+			}
 
-					elaspsed = System.currentTimeMillis() - startTime;
-					// timeout after 2 mins
-					if (elaspsed > 1000*60*2) {
-						System.out.println(jointMove.getKIFForm());
-						for (FluentInterface<Term> f : currentState.getFluents()) {
-							System.out.print(f.getKIFForm());
-						}
-						System.out.println();
-						break;
+			for (Player<Term, State<Term, GameState>> player : players.values()) {
+				if (player instanceof GAPlayer){
+					GAPlayer<Term, State<Term, GameState>> ml = (GAPlayer<Term, State<Term, GameState>>) player;
+					ml.gameScore(goalValues);
+				}
+			}
+		} catch (IllegalArgumentException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public int runSims(int numGames, int numGens, int numAgents) {
+		RouletteGenomeCollection gc = RouletteGenomeCollection.instance;
+
+		for (int i = 0; i < numAgents; i++) {
+			gc.nextAgent();
+			for (int j = 0; j < numGens; j++) {
+				gc.nextGen();
+				for (int k = 0; k < numGames; k++) {
+					gc.nextOpponent();
+					runGame(players);
+				}
+
+			}
+
+			// run against other players
+			Map<RoleInterface<Term>,Player<Term, State<Term, GameState>>> otherPlayers = new HashMap<>();
+			for (RoleInterface<Term> role : players.keySet()) {
+				if (role.isNature()) { // keep nature player
+					otherPlayers.put(role, players.get(role));
+				}
+				else if (players.get(role) instanceof GAPlayer) {
+					GAPlayer<Term, State<Term, GameState>> ga = (GAPlayer<Term, State<Term, GameState>>) players.get(role);
+					if (ga.getAgentID() == 0) { // only keep one ga player
+						otherPlayers.put(role, players.get(role));
+					}
+					else { // replace the other roles with other agent to test with
+						// random player
+						otherPlayers.put(role, PlayerFactory. <Term, State<Term, GameState>> createRandomPlayer(new RandomPlayerInfo(-1, game.getGdlVersion())));
 					}
 				}
-
-				HashMap<RoleInterface<Term>, Integer> goalValues = new HashMap<RoleInterface<Term>, Integer>();
-				for (RoleInterface<Term> role : game.getOrderedRoles()) {
-					int goal = currentState.getGoalValue(role);
-					goalValues.put(role, goal);
-				}
-
-				for (Player<Term, State<Term, GameState>> player : players.values()) {
-					if (player instanceof GAPlayer){
-						GAPlayer<Term, State<Term, GameState>> ml = (GAPlayer<Term, State<Term, GameState>>) player;
-						ml.gameScore(goalValues);
-					}
-				}
-			} catch (IllegalArgumentException e) {
-				e.printStackTrace();
+			}
+			gc.extraAgent("random");
+			for (int k = 0; k < numGames; k++) {
+				runGame(otherPlayers);
 			}
 		}
+
+		// +1 for the extra player type
+		return numGames * (numGens + 1);
 	}
 
 	private Map<RoleInterface<Term>,Player<Term, State<Term, GameState>>> createPlayers(Game<Term, GameState> game) {
@@ -136,7 +184,7 @@ public class GARunner {
 			Player<Term, State<Term, GameState>> player = players.get(role);
 			if (player instanceof GAPlayer){
 				GAPlayer<Term, State<Term, GameState>> ga = (GAPlayer<Term, State<Term, GameState>>) player;
-				ga.training(game, false);
+				ga.training(game, true);
 			}
 		}
 

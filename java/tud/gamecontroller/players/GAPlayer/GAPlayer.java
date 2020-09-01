@@ -59,6 +59,10 @@ public class GAPlayer<
         rand = new Random();
     }
 
+    public int getAgentID() {
+        return agentID;
+    }
+
     public void training(Game<Term, GameState> game, boolean roulette){
         training = true;
         this.roulette = roulette;
