@@ -1,10 +1,15 @@
 package tud.gamecontroller.players.GAPlayer;
 
 import java.io.BufferedWriter;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.PriorityQueue;
@@ -35,13 +40,14 @@ public class RouletteGenomeCollection {
 	private HashMap<RouletteGenome, HashMap<Integer, Float>> benchmarkScores;
 	private int benchmarkGen;
 	private Iterator<Integer> benchmarkGenIter;
-	//private final int scoringGameLimit = 5;
 	private HashMap<Integer, String> extraAgents;
 
-	private final int gameLimit = 10;
+	private final int gameLimit = 5;
 	private final int numLeaders = 5;
+	private final int numGenomes = 50;
 
-	private String dataFile = "testing.txt";
+	private String dataFile = "7wondersRoulette.txt";
+	private String saveFile = "testSave";
 
 	private Random rand;
 
@@ -86,13 +92,15 @@ public class RouletteGenomeCollection {
 	}
 
 	public void GameOver(HashMap<RoleInterface<Term>, Integer> scores, RoleInterface<Term> role, int agentID) {
-		int[] playerScores = new int[2];
+		int[] playerScores = new int[scores.size()];
+		int opponent = 1;
 		for (RoleInterface<Term> r : scores.keySet()){
 			if (r == role) {
 				playerScores[0] = scores.get(r);
 			}
 			else if (!r.isNature()){
-				playerScores[1] = scores.get(r);
+				playerScores[opponent] = scores.get(r);
+				opponent++;
 			}
 		}
 
@@ -119,6 +127,7 @@ public class RouletteGenomeCollection {
 						prevLeaders.put(generation, leadingPool.toArray(new RouletteGenome[0]));
 					}
 					printResults();
+					save(saveFile);
 					generation++;
 					gameCounter = 0;
 				}
@@ -139,64 +148,27 @@ public class RouletteGenomeCollection {
 		int numGens = prevLeaders.size();
 		int numLeaders = leadingPool.size();
 		scoringAgentIter = leadingPool.iterator();
-		//scoringAgent = scoringAgentIter.next();
 
 		benchmarkScores = new HashMap<>();
 		for (RouletteGenome agent : leadingPool) {
 			benchmarkScores.put(agent, new HashMap<>());
 		}
 		benchmarkGenIter = prevLeaders.keySet().iterator();
-		//benchmarkGen = benchmarkGenIter.next();
-		//int newAgent = rand.nextInt(prevLeaders.get(benchmarkGen).length);
-		//benchmarkAgent = prevLeaders.get(benchmarkGen)[newAgent];
-
 		extraAgents = new HashMap<>();
 
 		int games = gaRunner.runSims(numGames, numGens, numLeaders);
 		scoring = false;
-		return games;
+		return numGames;
 	}
 
+	// add to total score against current generation - divided by num games when printing
 	private void addScore(int[] playerScores) {
 		float score = playerScores[0] - playerScores[1];
-
-		// TODO check/ un-hardcode
 		benchmarkScores.get(scoringAgent).merge(benchmarkGen, score, Float::sum);
-
-		/*
-		if (++gameCounter == scoringGameLimit){
-			gameCounter = 0;
-			if (benchmarkGen == -1) { // reset for next agent
-				if (scoringAgentIter.hasNext()){
-					scoringAgent = scoringAgentIter.next();
-					benchmarkGenIter = prevLeaders.keySet().iterator();
-				}
-				else {
-					return;
-				}
-			}
-			/*if (benchmarkGenIter.hasNext()){
-				benchmarkGen = benchmarkGenIter.next();
-			}
-			else {
-				// this will be testing against another type of agent
-				benchmarkGen = -1;
-			}
-			
-			
-		}
-		// randomly select a previous leading agent from the generation being tested against
-	/*	if (benchmarkGen != -1) {
-			int newAgent = rand.nextInt(prevLeaders.get(benchmarkGen).length);
-			benchmarkAgent = prevLeaders.get(benchmarkGen)[newAgent];
-		}
-		*/
 	}
 
 
 	public void nextOpponent() {
-		//if (benchmarkGen != -1) {
-
 		int newAgent = rand.nextInt(prevLeaders.get(benchmarkGen).length);
 		benchmarkAgent = prevLeaders.get(benchmarkGen)[newAgent];
 	}
@@ -245,6 +217,7 @@ public class RouletteGenomeCollection {
 				// print out scoring against previous generation agents
 				for (int prevGen : benchmarkScores.get(agent).keySet()) {
 					if (prevGen < 0) {
+						//System.out.print("gen" + extraAgents.get(prevGen));
 						out.print(extraAgents.get(prevGen)); // print out agent type 
 					}
 					else {
@@ -256,24 +229,6 @@ public class RouletteGenomeCollection {
 				}
 
 			}
-
-			/*
-			out.printf("Generation %d:%n", generation);
-			for (RouletteGenome leader : leadingPool) {
-				out.print(leader.getFitness());
-				out.print(" ");
-				HashMap<String, Integer> probabilities = leader.getProbabilities();
-				for (String card : probabilities.keySet()) {
-					out.print(card);
-					out.print(":");
-					out.print(probabilities.get(card));
-					out.print(" ");
-				}
-				out.println();
-				
-			}
-			*/
-
 			out.close();
 		} catch (IOException e) {
 			System.err.println(e);
@@ -281,7 +236,7 @@ public class RouletteGenomeCollection {
 	}
 
 	private void init() {
-		generalPool = new RouletteGenome[50];
+		generalPool = new RouletteGenome[numGenomes];
 		leadingPool = new PriorityQueue<>((x,y) -> Float.compare(x.getFitness(), y.getFitness()));
 		gameCounter = 0;
 		totalGames = 0;
@@ -330,8 +285,45 @@ public class RouletteGenomeCollection {
 		else if (gameScores.length == 2) {
 			generalPool[index].updateFitness(gameScores[0] - gameScores[1]);
 		}
+		else { // fitness as player score minus the highest opponent score 
+			int highest = 0;
+			for (int i = 1; i < gameScores.length; i++) {
+				if (gameScores[i] > highest) {
+					highest = gameScores[i];
+				}
+			}
+			generalPool[index].updateFitness(highest);
+		}
 	}
 
+
+	private void save(String filepath) {
+		try {
+			FileOutputStream fileOut = new FileOutputStream(filepath);
+			ObjectOutputStream objectOut = new ObjectOutputStream(fileOut);
+			objectOut.writeObject(leadingPool.toArray());
+			objectOut.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void load(String filepath) {
+		try {
+			FileInputStream fileIn = new FileInputStream(filepath);
+			ObjectInputStream objectIn = new ObjectInputStream(fileIn);
+			try {
+				RouletteGenome[] leaders = (RouletteGenome[]) objectIn.readObject();
+				leadingPool.clear();
+				leadingPool.addAll(Arrays.asList(leaders));
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			}
+			objectIn.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 
 

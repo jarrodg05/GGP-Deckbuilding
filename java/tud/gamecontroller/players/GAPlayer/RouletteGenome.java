@@ -1,12 +1,13 @@
 package tud.gamecontroller.players.GAPlayer;
 
-import java.util.ArrayList;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Random;
 
-public class RouletteGenome {
+public class RouletteGenome implements Serializable {
 	
-	//private ArrayList<String> cardOrder;
+	private static final long serialVersionUID = 1L;
+
 	private HashMap<String, Integer> cards;
 	private float mutateChance = 0.3f;
 	private float fitness;
@@ -66,11 +67,12 @@ public class RouletteGenome {
 	}
 
 	public String getCard(String[] available) {
+		
 		int sum = 0;
 		for (String card : available) {
 			sum += cards.get(card);
 		}
-
+		
 		int choice = rand.nextInt(sum);
 		for (String card : available) {
 			choice -= cards.get(card);
@@ -83,19 +85,8 @@ public class RouletteGenome {
 		return available[rand.nextInt(available.length)];
 	}
 
-	/*
-	public ArrayList<String> getOrder() {
-		ArrayList<String> cardOrder = new ArrayList<>();
-		
-		int total = 0;
-		for (int val : cards.values()) {
-			total += val;
-		}
-		return cardOrder;
-	}
-	*/
-
 	public void updateFitness(int score) {
+	//	System.out.println("score:" + score);
 		float total = fitness * numGames;
 		total += score;
 		numGames++;
