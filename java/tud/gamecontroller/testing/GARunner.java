@@ -97,8 +97,21 @@ public class GARunner {
 				for (RoleInterface<Term> role : players.keySet()) {
 					Player<Term, State<Term, GameState>> player = players.get(role);
 					Object seesTerm = getSeesTermsForRole(role, player, priorState, priorJointMove);
+
+					try {
 					MoveInterface<Term> move = player.gamePlay(seesTerm, null);
 					jointMove.put(role, move);
+					}
+					catch (IllegalArgumentException e) {
+					
+						//System.out.println(jointMove.getKIFForm());
+						for (FluentInterface<Term> f : currentState.getFluents()) {
+							System.out.print(f.getKIFForm());
+						}
+						System.out.println();						
+					}
+
+
 				}
 
 				priorState = currentState;
@@ -108,7 +121,7 @@ public class GARunner {
 				elaspsed = System.currentTimeMillis() - startTime;
 				// timeout after 2 mins
 				if (elaspsed > 1000*60*2) {
-					System.out.println(jointMove.getKIFForm());
+					//System.out.println(jointMove.getKIFForm());
 					for (FluentInterface<Term> f : currentState.getFluents()) {
 						System.out.print(f.getKIFForm());
 					}
@@ -163,6 +176,9 @@ public class GARunner {
 						// random player
 						otherPlayers.put(role, PlayerFactory. <Term, State<Term, GameState>> createRandomPlayer(new RandomPlayerInfo(-1, game.getGdlVersion())));
 					}
+				}
+				else {
+					otherPlayers.put(role, PlayerFactory. <Term, State<Term, GameState>> createRandomPlayer(new RandomPlayerInfo(-1, game.getGdlVersion())));
 				}
 			}
 			gc.extraAgent("random");
