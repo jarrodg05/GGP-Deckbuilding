@@ -1107,7 +1107,7 @@
 	(resourceCost ?card coins ?num)
 )
 ;(<= (spentCoins ?p ?spent)
-;	(does ?p (buy ?card (?neighbour ?spent))
+;	(does ?p (buy ?card (?neighbour ?spent)))
 ;)
 (<= (spentCoins ?p ?spent)
 	(does ?p (buy ?card (?neighbour ?coins ?n2 ?c2)))
@@ -1127,7 +1127,6 @@
 	(add 3 ?given ?num)
 )
 
-)
 (<= (gainedCoins ?p ?coins)
 	(not (does ?p (discard ?card)))
 	(givenCoins ?p ?coins)
